@@ -46,7 +46,7 @@ ChannelLoop:
     jge EndProcess        ; Jeœli channel index >= channels, zakoñcz pêtlê
 
     ; Za³aduj wskaŸniki do danych dla kana³u
-    mov rax, [rData + r12*8]   ; rax = data[r12]
+    mov rax, [rData + r12*8]   ; rax = data[r12] 
     mov rbx, [rOutput + r12*8] ; rbx = output[r12]
 
     ; Inicjalizacja indeksu danych

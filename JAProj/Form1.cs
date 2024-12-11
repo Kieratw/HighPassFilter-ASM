@@ -17,18 +17,19 @@ namespace JAProj
 {
     public partial class Form1 : Form
     {
-        private WaveOutEvent waveOutInput;
-        private WaveOutEvent waveOutOutput;
+        private WaveOutEvent waveOut;
 
         private AudioFileReader audioFileReaderInput;
         private AudioFileReader audioFileReaderOutput;
 
-        private bool isInputSource = true; // Domyślnie odtwarzamy wejściowy
+        private bool isInputSource= true ; // Domyślnie odtwarzamy wejściowy
       //  private bool isPlaying = false;
      
 
         private string inputFilePath;  // Ścieżka do pliku wejściowego
         private string outputFilePath; // Ścieżka do pliku wyjściowego
+
+
         public Form1()
         {
             InitializeComponent();
@@ -154,11 +155,10 @@ namespace JAProj
 
         private void buttonSource_Click(object sender, EventArgs e)
         {
-            isInputSource = !isInputSource;
 
-            // Aktualizacja etykiety i głośności
+            isInputSource = !isInputSource;
             buttonSource.Text = isInputSource ? "Wejściowe" : "Wyjściowe";
-            UpdateVolume();
+
         }
 
         private void trackHz_Scroll(object sender, EventArgs e)
@@ -205,24 +205,39 @@ namespace JAProj
         {
             try
             {
-                // Inicjalizacja odtwarzaczy i czytników
-                audioFileReaderInput = new AudioFileReader(inputFilePath);
-                audioFileReaderOutput = new AudioFileReader(outputFilePath);
+                if (waveOut != null && waveOut.PlaybackState == PlaybackState.Playing)
+                {
+                    StopPlayback();
+                    buttonPlay.Text = "Play";
+                }
+                else
+                {
+                    StopPlayback();
 
-                waveOutInput = new WaveOutEvent();
-                waveOutOutput = new WaveOutEvent();
+                    if (isInputSource && !string.IsNullOrEmpty(inputFilePath))
+                    {
+                        audioFileReaderInput = new AudioFileReader(inputFilePath);
+                        waveOut = new WaveOutEvent();
+                        waveOut.Init(audioFileReaderInput);
+                    }
+                    else if (!isInputSource && !string.IsNullOrEmpty(outputFilePath))
+                    {
+                        audioFileReaderOutput = new AudioFileReader(outputFilePath);
+                        waveOut = new WaveOutEvent();
+                        waveOut.Init(audioFileReaderOutput);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Brak wybranego źródła dźwięku!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
 
-                waveOutInput.Init(audioFileReaderInput);
-                waveOutOutput.Init(audioFileReaderOutput);
+                    waveOut.Volume = volumeSlider1.Volume; 
+                    waveOut.Play();
+                    buttonPlay.Text = "Stop";
 
-                // Powiąż `VolumeSlider` z odtwarzaczami
-                volumeSlider1.BindToWaveOut(isInputSource ? waveOutInput : waveOutOutput);
-
-                // Rozpocznij odtwarzanie obu plików
-                waveOutInput.Play();
-                waveOutOutput.Play();
-
-                buttonPlay.Text = "Stop";
+                    waveOut.PlaybackStopped += (s, ev) => buttonPlay.Text = "Play";
+                }
             }
             catch (Exception ex)
             {
@@ -232,40 +247,32 @@ namespace JAProj
 
         private void volumeSlider1_Load(object sender, EventArgs e)
         {
-          
-        }
-        private void UpdateVolume()
-        {
-            if (waveOutInput != null && waveOutOutput != null)
+            if (waveOut != null && waveOut.PlaybackState == PlaybackState.Playing)
             {
-                if (isInputSource)
-                {
-                    waveOutInput.Volume = volumeSlider1.Volume; // Głośność wejściowego
-                    waveOutOutput.Volume = 0;                 // Wyciszenie wyjściowego
-                }
-                else
-                {
-                    waveOutInput.Volume = 0;                  // Wyciszenie wejściowego
-                    waveOutOutput.Volume = volumeSlider1.Volume; // Głośność wyjściowego
-                }
+                waveOut.Volume = volumeSlider1.Volume;
             }
         }
 
+
         private void StopPlayback()
         {
-            waveOutInput?.Stop();
-            waveOutOutput?.Stop();
-
-            waveOutInput?.Dispose();
-            waveOutOutput?.Dispose();
+            waveOut?.Stop();
+            waveOut?.Dispose();
+            waveOut = null;
 
             audioFileReaderInput?.Dispose();
-            audioFileReaderOutput?.Dispose();
-
-            waveOutInput = null;
-            waveOutOutput = null;
             audioFileReaderInput = null;
+
+            audioFileReaderOutput?.Dispose();
             audioFileReaderOutput = null;
+        }
+
+        private void volumeSlider1_VolumeChanged(object sender, EventArgs e)
+        {
+            if (waveOut != null)
+            {
+                waveOut.Volume = volumeSlider1.Volume;
+            }
         }
     }
 }

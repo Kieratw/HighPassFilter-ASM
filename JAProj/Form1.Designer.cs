@@ -228,6 +228,7 @@
             this.volumeSlider1.Name = "volumeSlider1";
             this.volumeSlider1.Size = new System.Drawing.Size(96, 16);
             this.volumeSlider1.TabIndex = 17;
+            this.volumeSlider1.VolumeChanged += new System.EventHandler(this.volumeSlider1_VolumeChanged);
             this.volumeSlider1.Load += new System.EventHandler(this.volumeSlider1_Load);
             // 
             // buttonSource
