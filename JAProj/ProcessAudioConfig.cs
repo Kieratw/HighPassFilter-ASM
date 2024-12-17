@@ -17,8 +17,8 @@ namespace JaProj
         public int FilterLength { get; set; }
         public int ThreadCount { get; set; }
 
-        public static readonly string AsmDllPath = @"C:\Users\wojci\source\repos\JAProj\x64\Debug\JADll.dll";
-        public static readonly string CDllPath = @"C:\Users\wojci\source\repos\JAProj\x64\Debug\cDll.dll";
+        public static readonly string AsmDllPath = @"C:\Users\wojci\source\repos\JAProj\x64\Release\JADll.dll";
+        public static readonly string CDllPath = @"C:\Users\wojci\source\repos\JAProj\x64\Release\cDll.dll";
     }
 
 

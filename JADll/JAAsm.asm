@@ -97,8 +97,8 @@ CoeffLoop_SIMD:
 
 CoeffLoop_Scalar:
 	mov r15, rCoeffLength
-    and r15, 7    
-    jmp CoeffLoop_Scalar_Inner
+    and r15, 7     
+    
 
 CoeffLoop_Scalar_Inner:
      
@@ -106,13 +106,11 @@ CoeffLoop_Scalar_Inner:
     vmovss xmm1, DWORD PTR [rCoeff + r14*4]
     ; Za³aduj pojedyncz¹ próbkê danych wejœciowych do xmm0
     vmovss xmm0, DWORD PTR [rsi + r14*4]
-     vmovaps ymm5, ymm2
-    ; Mno¿enie i akumulacja: xmm2[0] += xmm0 * xmm1
-     ; Mno¿enie i akumulacja: xmm2[0] += xmm0 * xmm1
+   ; Mno¿enie i akumulacja: xmm2[0] += xmm0 * xmm1
     mulss xmm0, xmm1                 ; xmm0 = xmm0 * xmm1
     addss xmm2, xmm0                 ; xmm2[0] += xmm0
   
-    ; vmovaps ymm5, ymm2
+
     ; Zwiêksz indeks wspó³czynnika
     inc r14
     ; Dekrementuj licznik pozosta³ych wspó³czynników
@@ -120,18 +118,15 @@ CoeffLoop_Scalar_Inner:
     jnz CoeffLoop_Scalar_Inner
    
 ReduceAccumulator:
-; Wydobycie górnej po³owy rejestru ymm2
-vmovaps ymm5, ymm2
-   vperm2f128 ymm3, ymm2, ymm2, 01h   ; ymm3 = [a4, a5, a6, a7, ..., ...]      ; xmm3 = [a4, a5, a6, a7]
-    vaddps xmm2, xmm2, xmm3          ; xmm2 = [a0+a4, a1+a5, a2+a6, a3+a7]
+    ; Wydobycie i dodanie górnej po³owy do dolnej
+    vperm2f128 ymm3, ymm2, ymm2, 1      ; Przenieœ górne 128 bitów na dó³
+    vaddps ymm2, ymm2, ymm3             ; Dodaj doln¹ i górn¹ czêœæ
 
-    ; Rêczna redukcja w dolnej po³owie xmm2
-    movaps xmm3, xmm2                ; Skopiowanie xmm2 do xmm3
-    shufps xmm3, xmm3, 4Eh           ; xmm3 = [a2+a6, a3+a7, a0+a4, a1+a5]
-    addps xmm2, xmm3                 ; xmm2 = [a0+a4+a2+a6, a1+a5+a3+a7, -, -]
+    ; Horyzontalne dodanie dolnych 128 bitów
+    vhaddps xmm2, xmm2, xmm2            ; Dodaj s¹siaduj¹ce wartoœci w dolnej po³owie
 
-    ; Finalne horyzontalne dodanie za pomoc¹ haddps
-    haddps xmm2, xmm2                ; xmm2 = [a0+a4+a2+a6+a1+a5+a3+a7, -, -, -]
+    ; Finalne sumowanie
+    vhaddps xmm2, xmm2, xmm2            ; Finalne dodanie wszystkich elementów
 
     ; Obliczenie indeksu wyjœciowego z przesuniêciem
     mov r15, rCoeffLength             ; r15 = coeffLength
@@ -140,10 +135,9 @@ vmovaps ymm5, ymm2
     shl r15, 2                        ; r15 *= 4 (rozmiar float w bajtach)
     lea rdi, [rbx + r15]              ; rdi = &output[channel][dataIndex + coeffLength - 1]
 
-    ; Zapis wyniku do pamiêci
    
     vmovss DWORD PTR [rdi], xmm2 ; Zapisujemy wynik z xmm2[0] do pamiêci wyjœciowej
-    vmovss xmm5, DWORD PTR [rdi]
+  
     inc r13                ; Zwiêkszenie indeksu danych
     jmp DataLoop           ; Powrót do pocz¹tku pêtli
 NextChannel:

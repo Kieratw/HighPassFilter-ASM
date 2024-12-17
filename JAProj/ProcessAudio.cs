@@ -140,6 +140,7 @@ namespace JaProj
             // Przetwarzanie fragmentów równolegle
             Parallel.For(0, threadCount, i =>
             {
+               
                 unsafe
                 {
                     float* ptrCoefficients = coefficients.AlignedPointer;
