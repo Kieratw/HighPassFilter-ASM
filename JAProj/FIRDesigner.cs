@@ -58,12 +58,26 @@ public class FIRDesigner
                 throw new Exception("Nie udało się zdeserializować współczynników z wyniku skryptu Pythona.");
             }
 
-            int lenght = coeffList.Count;
-            AlignedMemoryFloat alignedcoeff = new AlignedMemoryFloat(lenght);
-            for (int i = 0; i < lenght; i++)
+            int originalLength = coeffList.Count;
+
+            // Wylicz nową długość jako najbliższą wielokrotność 8
+            int paddedLength = (originalLength + 7) & ~7;
+
+            // Alokacja pamięci dla wyrównanych współczynników
+            AlignedMemoryFloat alignedcoeff = new AlignedMemoryFloat(paddedLength);
+
+            // Przekopiowanie oryginalnych współczynników
+            for (int i = 0; i < originalLength; i++)
             {
                 alignedcoeff.AlignedPointer[i] = coeffList[i];
             }
+
+            // Uzupełnienie zerami
+            for (int i = originalLength; i < paddedLength; i++)
+            {
+                alignedcoeff.AlignedPointer[i] = 0.0f;
+            }
+
             return alignedcoeff;
         }
     }
