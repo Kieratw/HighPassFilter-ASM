@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,8 +18,22 @@ namespace JaProj
         public int FilterLength { get; set; }
         public int ThreadCount { get; set; }
 
-        public static readonly string AsmDllPath = @"C:\Users\wojci\source\repos\JAProj\x64\Release\JADll.dll";
-        public static readonly string CDllPath = @"C:\Users\wojci\source\repos\JAProj\x64\Release\cDll.dll";
+        private static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
+        private static string ParentDirectory => Path.GetFullPath(Path.Combine(BaseDirectory, "..", "..","..",".."));
+        private static string BuildConfiguration =>
+        #if DEBUG
+            "Debug";
+        #else
+            "Release";
+        #endif
+
+        public static string AsmDllPath => Path.Combine(ParentDirectory, "x64", BuildConfiguration, "JADll.dll");
+        public static string CDllPath => Path.Combine(ParentDirectory, "x64", BuildConfiguration, "cDll.dll");
+
+        public ProcessAudioConfig()
+        {
+            DllPath = AsmDllPath; // Domyślnie ustaw na ASM DLL
+        }
     }
 
 
