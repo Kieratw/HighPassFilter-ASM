@@ -14,7 +14,7 @@ extern "C" __declspec(dllexport) void ProcessArray(
         float* outputData = output[ch];
 
         // Dla ka¿dej próbki w danych
-        for (int n = 0; n < dataLength - coeffLength + 1; n++)
+        for (int n = 0; n < dataLength - coeffLength + 1; n++) 
         {
             float y = 0.0f;
 
