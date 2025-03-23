@@ -1,76 +1,59 @@
-Project: High-Pass Filter Using SSE and AVX
+# High-Pass Filter Using SSE and AVX
 
-Project Description
+## 🚀 Project Description
+This project implements a **high-pass FIR filter** for audio signal processing. It offers two implementation options:
+- ✅ **C++ DLL** - Efficient implementation in C++
+- ✅ **ASM DLL** - Efficient assembly implementation with SIMD instructions (SSE and AVX)
 
-This project implements a high-pass FIR filter for audio signal processing. It includes two implementation versions:
+The application provides options to select filters, coefficient counts, and thread numbers to enhance performance.
 
-C++ DLL (efficient implementation in C++)
+---
 
-ASM DLL (efficient implementation in assembly with SIMD instructions - SSE and AVX)
+## 🧰 Features
+- 🎵 **Load WAV files** as input
+- 🎚️ **Adjustable filter settings** (cutoff frequency, number of coefficients)
+- ⚙️ **DLL selection** for flexibility in choosing C++ or ASM implementations
+- 🚀 **Multi-threading support** to boost performance
+- 📈 **Console visualization** and **audio playback** of filtered results
 
-The application allows for selecting filters, the number of coefficients, and the number of threads to optimize performance.
+---
 
-Features
+## 📋 Requirements
+- 🔹 Visual Studio (e.g., 2019 or newer)
+- 🔹 Python (installed and added to PATH)
+- 📦 Libraries:
+  - `NAudio` (for WAV file handling)
+  - `Newtonsoft.Json` (for JSON deserialization)
 
-Loading WAV files as input
+---
 
-Audio filtering using the FIR filter
+## 📥 Installation
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/username/project-name.git
+   ```
+2. **Open the project** in Visual Studio.
+3. **Build DLL versions:**
+   - Compile **cDll** for the C++ DLL.
+   - Compile **JADll** for the ASM DLL.
+4. Ensure the DLL file paths are set correctly in `ProcessAudioConfig.cs`.
+5. Run the project from Visual Studio.
 
-Support for DLL files written in C++ and ASM
+---
 
-Setting filter parameters (cutoff frequency, number of coefficients)
+## 🟢 Using the Application
+1. **Launch the application** and select an input WAV file.
+2. Choose the **output file's location**.
+3. Adjust filter parameters:
+   - 🎧 **Cutoff Frequency**
+   - 🔢 **Number of Coefficients**
+   - 🛠️ **DLL Type** (C++ or ASM)
+   - 🔄 **Thread Count**
+4. Click **"Ready"** to start filtering.
+5. Optionally, **play** the filtered audio directly from the app.
 
-Selecting the number of processing threads
+---
 
-Viewing results in the console and playing filtered audio
-
-Requirements
-
-Visual Studio (e.g., 2019 or later)
-
-Python (installed and added to PATH)
-
-Libraries:
-
-NAudio (for WAV file handling)
-
-Newtonsoft.Json (for deserializing filter coefficients)
-
-Installation
-
-Clone the repository:
-
-git clone https://github.com/username/project-name.git
-
-Open the project in Visual Studio.
-
-Prepare the compiled DLL versions:
-
-Build the cDll project for the C++ DLL.
-
-Build the JADll project for the ASM DLL.
-
-Ensure the DLL file paths are correctly set in ProcessAudioConfig.cs.
-
-Run the project from Visual Studio.
-
-Using the Application
-
-Run the application and select the input WAV file.
-
-Choose the location for the output file.
-
-Adjust filter parameters:
-
-Cutoff Frequency
-
-Number of Coefficients
-
-DLL Selection (C++ or ASM)
-
-Number of Threads
-
-Click "Ready" to start filtering.
-
-Optionally play the filtered audio.
+## 👨‍💻 Author
+Wojciech Kierat
 
